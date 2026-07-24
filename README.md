@@ -57,13 +57,19 @@ ai-vision-cobot-inspection/
 │   └── CNN 기반 이미지 분류 실습
 │
 ├── 02_yolo_segmentation/
-│   └── YOLO를 활용한 큐브 검출 및 위치·회전각 추정
+│   └── YOLO를 활용한 큐브 검출 및 위치, 영역, 회전각 추정
 │
 ├── 03_resnet_anomaly_detection/
-│   └── ResNet을 활용한 정상·이상 이미지 판별
+│   └── RealSense 데이터 수집
+│   └── YOLO 기반 큐브 Crop
+│   └── 224×224 데이터셋 생성
+│   └── 정상 이미지 기반 ResNet 이상 탐지 모델 학습·평가
 │
 ├── 04_cobot_anomaly_sorting/
 │   └── 비전 인공지능과 협동로봇을 연동한 자동 분류 시스템
+│   └── YOLO와 ResNet을 실제 협동로봇에 통합
+│   └── 큐브 위치·방향·불량 여부 판별
+│   └── GOOD/BAD 자동 위치 분류
 │
 ├── assets/
 │   └── 프로젝트 결과 이미지 및 시연 자료
