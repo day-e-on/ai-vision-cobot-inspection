@@ -29,7 +29,7 @@ Intel RealSense SDK 2.0 및 OpenCV를 활용하여 카메라 제어 파이프라
 
 ---
 
-## 4. 실시간 마우스 픽셀 좌표 및 3D 데이터 매핑 ([read_pixel.py](calibration/transform coord/read_pixel.py))
+## 4. 실시간 마우스 픽셀 좌표 및 3D 데이터 매핑 ([read_pixel.py](transform%20coord/read_pixel.py))
 실시간으로 스트리밍되는 화면에서 마우스 인터랙션을 통해 사용자가 지정한 임의의 타겟 픽셀 좌표값과 해당 지점의 실제 깊이(Depth) 데이터를 추출하는 실습입니다.
 
 * **OpenCV 마우스 콜백 이벤트 등록 (`cv2.setMouseCallback`)**: 컬러 영상 창 위에 마우스 클릭 이벤트(`cv2.EVENT_LBUTTONDOWN`) 발생 시 해당 마우스 커서의 2차원 이미지 픽셀 좌표인 $(u, v)$를 실시간으로 캐치합니다.
@@ -37,7 +37,7 @@ Intel RealSense SDK 2.0 및 OpenCV를 활용하여 카메라 제어 파이프라
 
 ---
 
-## 5. 픽셀 역투영을 통한 로봇 공간 좌표 계산 ([get_robot_coord.py](calibration/transform coord/get_robot_coord.py))
+## 5. 픽셀 역투영을 통한 로봇 공간 좌표 계산 ([get_robot_coord.py](calibration/transform%20coord/get_robot_coord.py))
 카메라 내부 행렬($K$)과 마우스 및 비전 센서로 취득한 픽셀 거리 정보를 수학적으로 결합(역투영 연산)하여, 최종적으로 두산 로봇이 추종해야 할 3차원 물리 태스크 좌표계를 연산해내는 단계입니다.
 
 * **이미지 픽셀의 3D 공간 역투영 (Inverse Projection)**: 도출된 초점 거리($f_x, f_y$)와 주점($c_x, c_y$) 상수를 기반으로 마우스 클릭 좌표 $(u, v)$와 깊이 값 $Z$를 수학적 픽셀 역투영 공식에 인가합니다. 이를 통해 카메라 렌즈 중심점을 원점($0,0,0$)으로 하는 카메라 좌표계 기준의 실제 3차원 물리 좌표 $(X_c, Y_c, Z_c)$를 도출합니다.
