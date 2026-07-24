@@ -1,5 +1,7 @@
 ## Model Preparation
 
+동작 영상 : https://mysterious-broccoli-188.notion.site/AI-3a7af7312d1d80c0aa91dc4cb98e3fdb?source=copy_link
+
 최종 로봇 시스템에 사용한 이상 탐지 모델은 다음 과정으로 준비했습니다.
 
 1. YOLO Segmentation 모델로 작업 영역의 큐브를 검출
