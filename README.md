@@ -11,6 +11,7 @@ CNN 이미지 분류부터 YOLO 객체 검출, ResNet 기반 이상 탐지까지
 최종적으로 비전 인공지능과 두산 협동로봇을 연동하여  
 양품과 불량품을 자동으로 분류하는 시스템을 구현했습니다.
 
+시연 영상: https://mysterious-broccoli-188.notion.site/AI-3a7af7312d1d80c0aa91dc4cb98e3fdb?source=copy_link
 ---
 
 ## Project Overview
