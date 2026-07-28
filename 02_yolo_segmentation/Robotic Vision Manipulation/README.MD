@@ -49,7 +49,7 @@ Validates the performance of the trained instance segmentation model on sample i
 
 ---
 
-## 6. Vision-Based Object Pick-and-Place ([pick_and_place.py](pick_and_place.py))
+## 6. Vision-Based Object Pick-and-Place ([pick_and_place_cube.py](pick_and_place_cube.py))
 
 Integrates the vision model outputs with the robot control class to execute automated pick-and-place operations.
 
