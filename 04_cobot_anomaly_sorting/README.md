@@ -1,6 +1,6 @@
 ## Model Preparation
 
-**Final Demonstration Video:**  
+**Project Demonstration Video:**  
 https://mysterious-broccoli-188.notion.site/AI-3a7af7312d1d80c0aa91dc4cb98e3fdb?source=copy_link
 
 The anomaly detection model used in the final robot system was prepared through the following workflow:
