@@ -13,7 +13,7 @@ Vision-based robotic manipulation requires extracting precise spatial position a
 
 ---
 
-## 2. Data Collection for YOLOv8n Training ([collect_img.py](collect_img.py)) 
+## 2. Data Collection for YOLOv8n Training ([collect_img.py](/Data%20Collection%20for%20YOLOv8n%20Training/collect_img.py)) 
 
 Acquires paired RGB color images and matching depth maps using the RealSense D435 camera to construct a dataset for model training.
 
