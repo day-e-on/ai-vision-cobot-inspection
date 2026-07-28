@@ -53,7 +53,10 @@ ai-vision-cobot-inspection/
 │   └── CNN-based image classification
 │
 ├── 02_yolo_segmentation/
-│   └── Cube detection and estimation of position, segmentation, and rotation using YOLO
+│   ├── ROS2-Based Doosan Cobot Control
+│   ├── Camera Calibration using RealSenseD435
+│   └── Robotic Vision Manipulation
+
 │
 ├── 03_resnet_anomaly_detection/
 │   ├── RealSense data collection
