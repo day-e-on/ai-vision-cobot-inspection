@@ -1,54 +1,65 @@
-# ROS2 기반 두산 협동로봇 제어 (Doosan Cobot Control)
+# Doosan Cobot Control with ROS 2
 
-두산 로보틱스에서 공식 지원하는 파이썬 기반 ROS2 통신 패키지(`doosan-robot2`)를 활용하여, Ubuntu 22.04 환경에서 협동로봇을 제어하기 위한 환경 구축 및 기본 실습 가이드입니다.
-
----
-
-## 1. 개발 환경 설정 (Environment Setup)
-ROS2 시스템의 안정적인 구동을 위해 Windows 듀얼 부팅 기반의 Linux 환경 및 필수 가속 라이브러리를 구축합니다.
-
-* **운영체제(OS) 설치**: Windows 디스크 볼륨을 축소하고 파티션을 분할하여 **Ubuntu 22.04 LTS**를 듀얼 부팅 방식으로 설치합니다. 효율적인 시스템 관리를 위해 설치 옵션은 `Minimal Installation`을 선택합니다.
-* **GPU 가속 및 라이브러리**: 비전 및 인공지능 알고리즘 연동을 위해 **NVIDIA 그래픽 드라이버(v535)**, **CUDA Toolkit 11.8**, **cuDNN 8.6.0**을 차례로 설치하고 터미널(`~/.bashrc`) 환경 변수를 등록합니다.
-* **ROS2 Humble 설치**: 우분투 환경 시스템 프레임워크인 **ROS2 Humble** 원격 소스 빌드 및 패키지 설치를 진행하고 시스템 환경 설정을 완료합니다.
+This repository provides a basic guide for setting up the development environment and practicing robot control using the official Python-based ROS 2 communication package (`doosan-robot2`) provided by Doosan Robotics in an Ubuntu 22.04 environment.
 
 ---
 
-## 2. 두산 로보틱스 패키지 설치 및 구동
-* **Docker 구성**: 환경 격리 및 배포를 위한 Docker Engine을 Ubuntu에 사전 설치합니다.
-* **드라이버 소스 빌드**: ROS2 Humble 작업 공간(`~/ros2_ws/src`)에 두산 공식 깃허브 저장소를 클론(`git clone -b humble`)한 뒤, 종속성 주입(`rosdep`) 및 `colcon build` 명령어를 통해 소스 컴파일을 수행합니다.
-* **로봇 드라이버 구동 명령어**: 모든 환경 설정을 마친 후, 아래의 런치(Launch) 스크립트를 실행하여 실제 협동로봇(M0609 모델 기준)의 서보 모터를 켜고 통신을 개시합니다. (robot ID와 IP에 따라 수정 필요)
-  ```bash
-  ros2 launch dsr_bringup2 dsr_bringup2_rviz.launch.py mode:=real host:=192.168.137.128 port:=12345 model:=m0609 name:=dsr02
-  ```
+## 1. Environment Setup
+
+To ensure stable operation of the ROS 2 system, prepare a Linux environment based on Windows dual boot and install the required acceleration libraries.
+
+- **Operating System (OS)**: Shrink the Windows disk volume and create a new partition to install **Ubuntu 22.04 LTS** in a dual-boot configuration. Select **Minimal Installation** during installation for efficient system management.
+- **GPU Acceleration and Libraries**: Install **NVIDIA Graphics Driver (v535)**, **CUDA Toolkit 11.8**, and **cuDNN 8.6.0** for future integration with computer vision and AI algorithms. Configure the required environment variables in `~/.bashrc`.
+- **ROS 2 Humble Installation**: Install **ROS 2 Humble** by building from the remote source, installing the required packages, and completing the system configuration.
 
 ---
 
-## 3. 로봇 실습 준비 (Robot Configuration)
-본격적인 제어에 앞서, 하드웨어 보호 및 정확한 엔드 이펙터 연산을 위해 두산 로봇 인터페이스(Workcell Manager)에서 다음 사항을 필수 등록합니다.
-* **툴 무게 생성**: 로봇 팔에 장착된 그리퍼 등의 하중을 측정 및 등록하여 모터 과부하를 방지합니다.
-* **엔드 이펙터(TCP) 생성**: 공구 중심점(Tool Center Point) 좌표를 지정하여 정밀한 기하학 연산 기반을 만듭니다.
+## 2. Installing and Running the Doosan Robotics Package
+
+- **Docker Setup**: Install Docker Engine on Ubuntu in advance to provide an isolated environment for deployment.
+- **Driver Source Build**: Clone the official Doosan Robotics GitHub repository into the ROS 2 workspace (`~/ros2_ws/src`) using `git clone -b humble`, install the required dependencies with `rosdep`, and compile the source using `colcon build`.
+- **Launching the Robot Driver**: After completing the environment setup, run the following launch command to activate the servo motors and establish communication with the physical robot (M0609 model). Modify the robot ID and IP address according to your setup.
+
+```bash
+ros2 launch dsr_bringup2 dsr_bringup2_rviz.launch.py mode:=real host:=192.168.137.128 port:=12345 model:=m0609 name:=dsr02
+```
 
 ---
 
-## 4. 제어 API 활용 실습 (Python API Examples)
-제공된 실습 스크립트들을 통해 직선 보간 운동, 각 관절 제어, 디지털 I/O를 통한 그리퍼 제어 및 모듈화 기법을 학습합니다.
+## 3. Robot Configuration
 
-### Ⅰ. 직선 보간 운동 제어 ([example_movel.py](example_movel.py))
-* **목적**: 태스크 좌표계(Task Space)를 기준으로 지정된 속도와 가속도에 맞춰 로봇을 직선 형태로 부드럽게 이동시킵니다.
-* **동작 시나리오**: `get_current_pose()`를 통해 로봇의 현재 좌표를 받아온 후, Z축 방향으로 지정된 도달 거리만큼 **상하 왕복 루프 운동**을 연속적으로 수행하도록 구현합니다.
+Before running the control programs, configure the following settings in the Doosan Workcell Manager to protect the hardware and ensure accurate end-effector calculations.
 
-### Ⅱ. 다각 궤적 제어 ([example_movel2.py](example_movel2.py))
-* **목적**: 3차원 공간에서 다수의 기준 좌표 타겟을 직교 공간 상에서 순차적으로 연결하는 고도화 궤적을 제어합니다.
-* **동작 시나리오**: 총 4개의 Task 지점(Point 1 ~ 4)을 사각형 형태로 매핑한 뒤, `for` 루프 반복문을 통해 엔드 이펙터가 **20cm(200mm) 크기의 정밀한 정사각형 경로를 총 3회 반복**하여 그리도록 구동합니다.
+- **Tool Weight Configuration**: Measure and register the weight of the attached tool, such as a gripper, to prevent motor overload.
+- **Tool Center Point (TCP) Configuration**: Define the Tool Center Point (TCP) coordinates to establish the reference for accurate kinematic calculations.
 
-### Ⅲ. 관절 공간 기반 홈 포즈 이동 ([home_pose.py](home_pose.py))
-* **목적**: 로봇의 직교 좌표계 특이점(Singularity) 문제를 회피하고, 안전한 기준 위치로 복귀하기 위해 각 관절(Joint)의 각도를 직접 제어합니다.
-* **동작 시나리오**: 정의된 홈 조인트 배열(`home_joint = [-180.00, 0.00, 90.00, 0.00, 90.00, 60.00]`)을 바탕으로 `movej()` 함수를 호출하여 로봇을 안전 영역(Home Position)으로 부드럽게 복귀시킵니다.
+---
 
-### Ⅳ. 디지털 출력을 통한 그리퍼 제어 ([gripper_control.py](gripper_control.py))
-* **목적**: 로봇 컨트롤러의 디지털 출력(Digital Output) 포트에 트리거 신호를 인가하여 말단부 툴의 잡기(Grasp) 및 풀기(Release) 제어를 수행합니다.
-* **동작 시나리오**: 엔드 이펙터 플랜지 플러그 신호인 `set_tool_digital_output(index, val)` 함수를 정의하고, index 포트 값의 온/오프 상태 전환과 `time.sleep(1)` 지연을 조합하여 그리퍼가 열고 닫히는 반복 시퀀스를 구현합니다.
+## 4. Python API Examples
 
-### Ⅴ. 모듈화를 위한 로봇 제어 클래스 설계 ([robot.py](robot.py))
-* **목적**: 위에서 테스트한 개별 제어 기능(MoveL, MoveJ, Home, Gripper)들을 하나의 Python Class 구조로 통합하여 코드의 재사용성과 가독성을 극대화합니다.
-* **구조적 장점**: `Robot` 클래스 내부에서 ROS2 노드(`node`) 객체를 생성하고, 인스턴스 초기화(`__init__`) 시 두산 API 라이브러리를 동적 임포트하여 `self.move_l()`, `self.grasp()`, `self.release()` 등의 객체 지향형 메서드로 로봇 동작들을 간결하게 호출 및 관리할 수 있게 합니다.
+The provided example scripts demonstrate linear motion control, joint control, gripper control through digital I/O, and code modularization.
+
+### I. Linear Motion Control ([example_movel.py](example_movel.py))
+
+- **Objective**: Move the robot smoothly along a straight path in Task Space using the specified velocity and acceleration.
+- **Scenario**: Retrieve the robot's current pose using `get_current_pose()`, then continuously perform a vertical reciprocating motion along the Z-axis over the specified travel distance.
+
+### II. Multi-Point Trajectory Control ([example_movel2.py](example_movel2.py))
+
+- **Objective**: Control an advanced trajectory by sequentially connecting multiple target positions in Cartesian space.
+- **Scenario**: Define four task positions (Point 1–Point 4) as the corners of a square, then use a `for` loop to make the end-effector trace a **200 mm × 200 mm square path three times**.
+
+### III. Home Position Control in Joint Space ([home_pose.py](home_pose.py))
+
+- **Objective**: Avoid singularities in Cartesian space and safely return the robot to its home position by directly controlling each joint angle.
+- **Scenario**: Define the home joint array (`home_joint = [-180.00, 0.00, 90.00, 0.00, 90.00, 60.00]`) and call the `movej()` function to move the robot smoothly back to the predefined home position.
+
+### IV. Gripper Control Using Digital Output ([gripper_control.py](gripper_control.py))
+
+- **Objective**: Control the grasp and release actions of the end-effector by sending trigger signals through the robot controller's digital output ports.
+- **Scenario**: Define the `set_tool_digital_output(index, val)` function for the flange plug signal and combine digital output on/off switching with `time.sleep(1)` delays to implement a repetitive gripper open-and-close sequence.
+
+### V. Robot Control Class Design for Code Modularization ([robot.py](robot.py))
+
+- **Objective**: Integrate the individual control functions developed above (MoveL, MoveJ, Home, and Gripper) into a single Python class to improve code reusability and readability.
+- **Structural Advantage**: The `Robot` class creates a ROS 2 node (`node`) internally and dynamically imports the Doosan API library during instance initialization (`__init__`). This allows robot operations such as `self.move_l()`, `self.grasp()`, and `self.release()` to be called and managed through object-oriented methods.
