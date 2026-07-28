@@ -1,45 +1,45 @@
-# RealSense를 활용한 카메라 캘리브레이션 (Camera Calibration)
+# Camera Calibration using Intel RealSense
 
-Intel RealSense SDK 2.0 및 OpenCV를 활용하여 카메라 제어 파이프라인을 객체지향(OOP) 클래스로 모듈화하고, 실시간 이미지 취득부터 픽셀 역투영(Inverse Projection)을 통한 로봇 타겟 좌표 연산까지의 전 과정을 다루는 가이드입니다.
-
----
-
-## 1. RealSense 카메라 클래스 설계 및 모듈화 ([camera.py](camera.py))
-로봇 제어 클래스(`robot.py`)와 마찬가지로, 카메라 하드웨어 제어 알고리즘의 재사용성과 확장성을 극대화하기 위해 Python Class 구조로 캡슐화(Encapsulation)를 진행합니다.
-
-* **`__init__(self)` (인스턴스 초기화 및 파이프라인 세팅)**: `pyrealsense2` 라이브러리의 커널 파이프라인(`rs.pipeline()`)과 환경 설정(`rs.config()`) 객체를 생성합니다.
-* **`start(self)` (스트리밍 개시)**: RGB 컬러 스트림과 Depth(깊이) 스트림을 동시 활성화하고, 이미지 채널 간의 픽셀 매칭 오류를 차단하기 위해 깊이 픽셀의 기준 축을 컬러 렌즈 좌표계로 강제 맞추는 `rs.align()` 프로세서를 등록합니다.
-* **`stop(self)` (하드웨어 자원 해제)**: 시스템 종료 시 하드웨어 충돌을 방지하기 위해 구동 중인 RealSense 파이프라인 버퍼를 안전하게 셧다운(`pipeline.stop()`)합니다.
+This guide covers the entire process of modularizing a camera control pipeline into an object-oriented (OOP) class using the Intel RealSense SDK 2.0 and OpenCV, from real-time image acquisition to calculating 3D robot target coordinates via inverse projection.
 
 ---
 
-## 2. 실시간 RGB-D 이미지 취득 및 데이터셋 수집 ([get_images.py](get_images.py))
-디바이스 프레임 버퍼에 동기식(`wait_for_frames()`)으로 접근하여, 카메라 행렬 계산 및 보정에 필요한 고품질 영상 샘플을 파일로 저장하는 프로세스입니다.
+## 1. RealSense Camera Class Design & Modularization ([camera.py](camera.py))
+Similar to the robot control class (`robot.py`), hardware control algorithms are encapsulated into a Python class structure to maximize reusability and scalability.
 
-* **넘파이(NumPy) 행렬 변환 및 OpenCV 출력**: 수신된 로우(Raw) 데이터 버퍼를 OpenCV 프레임 워크가 처리할 수 있는 `numpy.asanyarray()` 형태의 2차원 행렬(RGB 및 16-bit Depth Matrix)로 각각 파싱하여 화면에 실시간 렌더링합니다.
-* **키보드 트리거 기반 이미지 샘플링**: 사용자가 `Space바` 키를 입력하는 순간, 정렬된 컬러 프레임 (`cv2.imwrite()`)과 매칭되는 Depth 맵 데이터를 로컬 디렉토리 내에 유니크한 인덱스 파일 구조(`color_0.png`, `depth_0.png`)로 디스크에 동시 적재합니다.
-
----
-
-## 3. 체커보드 기반 내부 캘리브레이션 연산 ([calibration.py](calibration/calibration.py))
-수집된 샘플 이미지 데이터셋을 활용하여 OpenCV 기하학 수학 연산 노드를 구동하고, 렌즈 왜곡 계수와 초점 거리 행렬을 최종 연산해 내는 핵심 보정 단계입니다.
-
-* **`cv2.findChessboardCorners()` (격자 코너 정밀 추적)**: 저장된 체커보드 파일들을 로드하여 코너 교차점을 탐색하고, `cv2.cornerSubPix()` 연산을 통해 소수점(Sub-pixel) 단위의 초정밀 픽셀 위치를 갱신합니다.
-* **`cv2.calibrateCamera()` (최종 내부 행렬 도출)**: 정렬 매핑된 공간 좌표셋을 솔버 엔진에 인가하여 카메라 인트린식 행렬($K$, 초점거리 및 주점 구조체)과 왜곡 계수 매트릭스($D$)를 최종 계산하여 JSON/YAML 파일로 직렬화하여 내보냅니다.
+* **`__init__(self)` (Instance Initialization & Pipeline Setup)**: Creates kernel pipeline (`rs.pipeline()`) and configuration (`rs.config()`) objects from the `pyrealsense2` library.
+* **`start(self)` (Start Streaming)**: Enables both RGB color and depth streams simultaneously, registering an `rs.align()` processor to align the depth pixels to the color lens coordinate frame and prevent pixel-matching errors.
+* **`stop(self)` (Release Hardware Resources)**: Safely shuts down the active RealSense pipeline buffer (`pipeline.stop()`) on system termination to prevent hardware conflicts.
 
 ---
 
-## 4. 실시간 마우스 픽셀 좌표 및 3D 데이터 매핑 ([read_pixel.py](transform%20coord/read_pixel.py))
-실시간으로 스트리밍되는 화면에서 마우스 인터랙션을 통해 사용자가 지정한 임의의 타겟 픽셀 좌표값과 해당 지점의 실제 깊이(Depth) 데이터를 추출하는 실습입니다.
+## 2. Real-Time RGB-D Image Acquisition & Dataset Collection ([get_images.py](get_images.py))
+Synchronously accesses the device frame buffer (`wait_for_frames()`) to save high-quality image samples to disk for camera matrix calculation and calibration.
 
-* **OpenCV 마우스 콜백 이벤트 등록 (`cv2.setMouseCallback`)**: 컬러 영상 창 위에 마우스 클릭 이벤트(`cv2.EVENT_LBUTTONDOWN`) 발생 시 해당 마우스 커서의 2차원 이미지 픽셀 좌표인 $(u, v)$를 실시간으로 캐치합니다.
-* **실시간 픽셀 기반 3D 심도값 매칭**: 마우스로 클릭한 픽셀 좌표 $(u, v)$를 인덱스로 활용하여, 동일한 축으로 정렬된 Depth 행렬 프레임에서 카메라 렌즈와 타겟 물체 간의 물리적 직선 거리 데이터 $Z$(단위: mm)를 매칭하여 터미널에 실시간 출력합니다.
+* **NumPy Matrix Conversion & OpenCV Output**: Parses incoming raw data buffers into 2D matrices (`numpy.asanyarray()`) readable by OpenCV (RGB and 16-bit depth matrix) and renders them in real time.
+* **Keyboard Triggered Image Sampling**: Captures and saves the aligned color frame (`cv2.imwrite()`) and matching depth map data simultaneously as uniquely indexed files (e.g., `color_0.png`, `depth_0.png`) whenever the user presses the `Spacebar`.
 
 ---
 
-## 5. 픽셀 역투영을 통한 로봇 공간 좌표 계산 ([get_robot_coord.py](calibration/transform%20coord/get_robot_coord.py))
-카메라 내부 행렬($K$)과 마우스 및 비전 센서로 취득한 픽셀 거리 정보를 수학적으로 결합(역투영 연산)하여, 최종적으로 두산 로봇이 추종해야 할 3차원 물리 태스크 좌표계를 연산해내는 단계입니다.
+## 3. Checkerboard-Based Intrinsic Calibration ([calibration.py](calibration/calibration.py))
+Runs OpenCV geometric/math operations using the collected image dataset to compute lens distortion coefficients and the focal length matrix.
 
-* **이미지 픽셀의 3D 공간 역투영 (Inverse Projection)**: 도출된 초점 거리($f_x, f_y$)와 주점($c_x, c_y$) 상수를 기반으로 마우스 클릭 좌표 $(u, v)$와 깊이 값 $Z$를 수학적 픽셀 역투영 공식에 인가합니다. 이를 통해 카메라 렌즈 중심점을 원점($0,0,0$)으로 하는 카메라 좌표계 기준의 실제 3차원 물리 좌표 $(X_c, Y_c, Z_c)$를 도출합니다.
+* **`cv2.findChessboardCorners()` (Grid Corner Detection)**: Loads saved checkerboard images to detect corner intersections and refines pixel coordinates to sub-pixel precision using `cv2.cornerSubPix()`.
+* **`cv2.calibrateCamera()` (Intrinsic Matrix Derivation)**: Inputs the aligned spatial coordinates into the solver engine to compute the camera intrinsic matrix ($K$, containing focal lengths and principal points) and distortion coefficients ($D$), then serializes the results to JSON or YAML format.
+
+---
+
+## 4. Real-Time Mouse Pixel Coordinates & 3D Data Mapping ([read_pixel.py](transform%20coord/read_pixel.py))
+Retrieves target pixel coordinates and their corresponding real depth values based on user mouse interaction in a live video stream.
+
+* **OpenCV Mouse Callback Event (`cv2.setMouseCallback`)**: Registers mouse click events (`cv2.EVENT_LBUTTONDOWN`) on the color frame window to extract 2D image pixel coordinates $(u, v)$ in real time.
+* **Real-Time Pixel Depth Matching**: Uses the clicked pixel coordinate $(u, v)$ as an index to query the aligned depth matrix, obtaining the physical distance $Z$ (in mm) from the camera lens to the target object and printing it to the terminal.
+
+---
+
+## 5. Robot Spatial Coordinate Calculation via Pixel Inverse Projection ([get_robot_coord.py](calibration/transform%20coord/get_robot_coord.py))
+Combines the camera intrinsic matrix ($K$), pixel coordinates, and sensor depth values mathematically (inverse projection) to derive the 3D physical task coordinates for the Doosan robot.
+
+* **3D Spatial Inverse Projection**: Passes the mouse click coordinates $(u, v)$ and depth $Z$ through the inverse projection formula using the focal lengths ($f_x, f_y$) and principal points ($c_x, c_y$). This derives the physical 3D coordinates $(X_c, Y_c, Z_c)$ in the camera coordinate frame, centered at the camera lens $(0,0,0)$.
   $$\quad X_c = \frac{(u - c_x) \times Z}{f_x} \quad,\quad Y_c = \frac{(v - c_y) \times Z}{f_y} \quad,\quad Z_c = Z$$
-* **카메라-로봇 좌표계 변환 행렬 연산**: 최종적으로 핸드-아이 캘리브레이션 행렬(Transformation Matrix)을 적용하여, 카메라 기준의 3D 좌표를 두산 협동로봇의 베이스 기준 좌표계인 태스크 공간 좌표(Task Coordinates)로 변환해 냄으로써 로봇이 정확한 물체 위치로 무브(`movel`)할 수 있는 최종 목적지 값을 연산해 냅니다.
+* **Camera-to-Robot Coordinate Transformation Matrix**: Applies a hand-eye calibration matrix (transformation matrix) to convert 3D coordinates from the camera frame to task space coordinates relative to the Doosan cobot base frame. This allows the robot to move (`movel`) accurately to the computed target position.
