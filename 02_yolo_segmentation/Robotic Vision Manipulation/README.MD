@@ -1,4 +1,4 @@
-# 3. Vision Manipulation & YOLOv8n-Seg Pipeline
+# Vision Manipulation & YOLOv8n-Seg Pipeline
 
 This section covers the process of collecting an image dataset using an RGB-D camera, annotating and generating a dataset for instance segmentation via Roboflow, training and testing a YOLOv8n-seg model, and estimating the 3D position and rotation (grasping point) of objects for vision-based pick-and-place manipulation.[cite: 1]
 
