@@ -1,188 +1,184 @@
-# ai-vision-robot-inspection
-협동로봇 프로젝트
-
-````markdown
 # AI Vision-Based Cobot Inspection System
 
-WISET AI 로봇 시스템 엔지니어 전문인력 양성과정에서 수행한  
-AI 비전 및 협동로봇 프로젝트를 정리한 저장소입니다.
+This repository summarizes an AI vision and collaborative robot project completed as part of the **WISET AI Robot System Engineer Training Program**.
 
-CNN 이미지 분류부터 YOLO 객체 검출, ResNet 기반 이상 탐지까지 학습한 뒤,  
-최종적으로 비전 인공지능과 두산 협동로봇을 연동하여  
-양품과 불량품을 자동으로 분류하는 시스템을 구현했습니다.
+Starting with CNN-based image classification, the project progressed through YOLO object detection and ResNet-based anomaly detection. Finally, the vision AI models were integrated with a Doosan collaborative robot to build an automated inspection system that classifies products as either good or defective.
 
-시연 영상: https://mysterious-broccoli-188.notion.site/AI-3a7af7312d1d80c0aa91dc4cb98e3fdb?source=copy_link
----
-
-## Project Overview
-
-이 저장소는 다음 네 단계의 프로젝트로 구성되어 있습니다.
-
-```text
-01. CNN 기반 이미지 분류
-02. YOLO 기반 객체 검출 및 위치 인식
-03. ResNet 기반 Anomaly Detection
-04. AI 비전과 협동로봇을 연동한 자동 분류 시스템
-````
-
-각 프로젝트에서 개발한 모델과 기능을 최종 협동로봇 시스템에 통합했습니다.
+**Demonstration Video:**  
+https://mysterious-broccoli-188.notion.site/AI-3a7af7312d1d80c0aa91dc4cb98e3fdb?source=copy_link
 
 ---
 
-## System Workflow
+# Project Overview
+
+This repository consists of the following four projects:
 
 ```text
-RealSense 카메라 촬영
+01. CNN-Based Image Classification
+02. YOLO-Based Object Detection and Localization
+03. ResNet-Based Anomaly Detection
+04. AI Vision-Based Automated Sorting with a Collaborative Robot
+```
+
+The models and functionalities developed in each project were integrated into the final collaborative robot inspection system.
+
+---
+
+# System Workflow
+
+```text
+RealSense Camera Capture
         ↓
-YOLO 기반 큐브 검출
+YOLO-Based Cube Detection
         ↓
-큐브 중심 좌표·깊이·회전각 계산
+Cube Center, Depth, and Rotation Estimation
         ↓
-ResNet 기반 이상 여부 판별
+ResNet-Based Anomaly Detection
         ↓
-카메라 좌표를 로봇 좌표로 변환
+Camera-to-Robot Coordinate Transformation
         ↓
-두산 협동로봇 Pick & Place
+Doosan Cobot Pick-and-Place
         ↓
-양품과 불량품을 서로 다른 위치로 분류
+Automatic Sorting of Good and Defective Products
 ```
 
 ---
 
-## Repository Structure
+# Repository Structure
 
 ```text
 ai-vision-cobot-inspection/
 │
 ├── 01_cnn_classification/
-│   └── CNN 기반 이미지 분류 실습
+│   └── CNN-based image classification
 │
 ├── 02_yolo_segmentation/
-│   └── YOLO를 활용한 큐브 검출 및 위치, 영역, 회전각 추정
+│   └── Cube detection and estimation of position, segmentation, and rotation using YOLO
 │
 ├── 03_resnet_anomaly_detection/
-│   └── RealSense 데이터 수집
-│   └── YOLO 기반 큐브 Crop
-│   └── 224×224 데이터셋 생성
-│   └── 정상 이미지 기반 ResNet 이상 탐지 모델 학습·평가
+│   ├── RealSense data collection
+│   ├── YOLO-based cube cropping
+│   ├── 224 × 224 dataset generation
+│   └── Training and evaluation of a ResNet-based anomaly detection model
 │
 ├── 04_cobot_anomaly_sorting/
-│   └── 비전 인공지능과 협동로봇을 연동한 자동 분류 시스템
-│   └── YOLO와 ResNet을 실제 협동로봇에 통합
-│   └── 큐브 위치·방향·불량 여부 판별
-│   └── GOOD/BAD 자동 위치 분류
+│   ├── Automated sorting system integrating AI vision and a collaborative robot
+│   ├── Integration of YOLO and ResNet with the Doosan cobot
+│   ├── Cube position, orientation, and anomaly detection
+│   └── Automatic GOOD/BAD sorting
 │
 ├── assets/
-│   └── 프로젝트 결과 이미지 및 시연 자료
+│   └── Project images and demonstration materials
 │
 └── README.md
 ```
 
 ---
 
-## 01. CNN Classification
+# 01. CNN Classification
 
-CNN의 기본 구조와 이미지 분류 과정을 이해하기 위해 수행한 프로젝트입니다.
+This project was conducted to understand the fundamentals of CNNs and the image classification process.
 
-* 이미지 데이터 전처리
-* CNN 모델 구성
-* 모델 학습 및 평가
-* 새로운 이미지에 대한 추론
-
----
-
-## 02. YOLO Segmentation
-
-RealSense 카메라로 촬영한 영상에서 큐브를 검출하기 위해
-YOLO Segmentation 모델을 학습하고 적용했습니다.
-
-주요 기능은 다음과 같습니다.
-
-* 큐브 객체 검출
-* 객체별 마스크 추출
-* 중심 픽셀 좌표 계산
-* 깊이 정보 측정
-* 큐브 회전각 추정
+- Image data preprocessing
+- CNN model implementation
+- Model training and evaluation
+- Inference on new images
 
 ---
 
-## 03. ResNet Anomaly Detection
+# 02. YOLO Segmentation
 
-정상 큐브 이미지를 학습한 ResNet 기반 모델을 활용하여
-입력 이미지가 정상인지 이상인지 판별했습니다.
+A YOLO Segmentation model was trained and applied to detect cubes captured by an Intel RealSense camera.
+
+Main features include:
+
+- Cube detection
+- Instance mask extraction
+- Center pixel calculation
+- Depth estimation
+- Cube rotation angle estimation
+
+---
+
+# 03. ResNet Anomaly Detection
+
+A ResNet-based model trained with normal cube images was used to determine whether an input image was normal or anomalous.
 
 ```text
 Input Image
      ↓
-YOLO 객체 영역 Crop
+YOLO Object Cropping
      ↓
 ResNet Feature Extraction
      ↓
-Anomaly Score 계산
+Anomaly Score Calculation
      ↓
-GOOD / NG 판정
+GOOD / NG Classification
 ```
 
-설정한 임계값을 기준으로 Anomaly Score를 비교하여
-양품과 불량품을 구분했습니다.
+The anomaly score was compared with a predefined threshold to classify products as either good or defective.
 
 ---
 
-## 04. Cobot Anomaly Sorting
+# 04. Cobot Anomaly Sorting
 
-앞선 YOLO 및 ResNet 모델을 두산 협동로봇 M0609와 연동한
-최종 AI 로봇 프로젝트입니다.
+This is the final AI robot project, integrating the YOLO and ResNet models with a **Doosan Robotics M0609** collaborative robot.
 
-### 주요 기능
+## Main Features
 
-* RealSense D435 영상 입력
-* YOLO 기반 큐브 위치 검출
-* ResNet 기반 이상 탐지
-* 카메라 좌표계에서 로봇 좌표계로 좌표 변환
-* 큐브 위치와 회전각을 고려한 로봇 파지
-* 판정 결과에 따른 양품·불량품 분리 적재
-* 중앙 기어 조립 과정에서 순응제어 적용
-
----
-
-## Tech Stack
-
-### AI / Vision
-
-* Python
-* PyTorch
-* Ultralytics YOLO
-* CNN
-* ResNet
-* OpenCV
-* NumPy
-
-### Robot / Sensor
-
-* Doosan Robotics M0609
-* ROS 2
-* RealSense D435
-* Pick & Place
-* Force Control
-* Compliance Control
+- RealSense D435 image acquisition
+- YOLO-based cube detection
+- ResNet-based anomaly detection
+- Camera-to-robot coordinate transformation
+- Robot grasping based on cube position and orientation
+- Automatic sorting of good and defective products
+- Compliance control during the center gear assembly process
 
 ---
 
-## Project Result
+# Tech Stack
 
-비전 센서로 작업물을 인식하고 AI 모델로 이상 여부를 판별한 뒤,
-판정 결과에 따라 협동로봇이 작업물을 서로 다른 위치로 자동 분류하도록 구현했습니다.
+## AI / Vision
 
-이를 통해 다음 과정을 하나의 시스템으로 통합했습니다.
+- Python
+- PyTorch
+- Ultralytics YOLO
+- CNN
+- ResNet
+- OpenCV
+- NumPy
+
+## Robot / Sensor
+
+- Doosan Robotics M0609
+- ROS 2
+- Intel RealSense D435
+- Pick-and-Place
+- Force Control
+- Compliance Control
+
+---
+
+# Project Result
+
+The completed system recognizes objects using a vision sensor, determines whether they are normal or defective using AI models, and automatically sorts them into different locations using a collaborative robot.
+
+The entire workflow is integrated into a single system:
 
 ```text
-Perception → AI Judgment → Coordinate Transformation
-→ Robot Manipulation → Automatic Sorting
+Perception
+      ↓
+AI-Based Inspection
+      ↓
+Coordinate Transformation
+      ↓
+Robot Manipulation
+      ↓
+Automatic Sorting
 ```
 
 ---
 
-## Notes
+# Notes
 
-모델 가중치와 전체 데이터셋은 파일 용량 및 데이터 관리 문제로
-저장소에 포함하지 않았습니다.
+The trained model weights and the complete dataset are not included in this repository due to file size limitations and dataset management considerations.
