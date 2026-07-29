@@ -13,7 +13,7 @@ Similar to the robot control class (`robot.py`), hardware control algorithms are
 
 ---
 
-## 2. Real-Time RGB-D Image Acquisition & Dataset Collection ([get_images.py](get_images.py))
+## 2. Real-Time RGB-D Image Acquisition & Dataset Collection ([capture.py](capture.py))
 Synchronously accesses the device frame buffer (`wait_for_frames()`) to save high-quality image samples to disk for camera matrix calculation and calibration.
 
 * **NumPy Matrix Conversion & OpenCV Output**: Parses incoming raw data buffers into 2D matrices (`numpy.asanyarray()`) readable by OpenCV (RGB and 16-bit depth matrix) and renders them in real time.
@@ -37,7 +37,7 @@ Retrieves target pixel coordinates and their corresponding real depth values bas
 
 ---
 
-## 5. Robot Spatial Coordinate Calculation via Pixel Inverse Projection ([get_robot_coord.py](calibration/transform%20coord/get_robot_coord.py))
+## 5. Robot Spatial Coordinate Calculation via Pixel Inverse Projection ([get_robot_coord.py](transform%20coord/get_robot_coord.py))
 Combines the camera intrinsic matrix ($K$), pixel coordinates, and sensor depth values mathematically (inverse projection) to derive the 3D physical task coordinates for the Doosan robot.
 
 * **3D Spatial Inverse Projection**: Passes the mouse click coordinates $(u, v)$ and depth $Z$ through the inverse projection formula using the focal lengths ($f_x, f_y$) and principal points ($c_x, c_y$). This derives the physical 3D coordinates $(X_c, Y_c, Z_c)$ in the camera coordinate frame, centered at the camera lens $(0,0,0)$.
